@@ -18,6 +18,14 @@ pub mod print_md
 	}
 
 
+	// GIVE LENGTH OF VECTOR WHICH CONTAIN CURRENT FOLDER'S DATA
+	pub fn get_folder_length() -> u64
+	{
+		let length: u64 = (get().len() as u64);
+		return length;
+	}
+
+
 	pub fn start(id: i32)
 	{
 		let folder: Vec<String> = get();
