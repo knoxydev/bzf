@@ -1,3 +1,3 @@
 # bzf
 
-### Blazinlgy fast file manager on Rust
+### Blazingly fast file manager on Rust

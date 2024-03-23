@@ -9,6 +9,7 @@ mod keyboard;
 pub use crate::keyboard::keyboard_md;
 
 mod print;
+mod state;
 
 
 // PACKAGES
@@ -20,6 +21,6 @@ use std::io::{self, Write};
 
 fn main()
 {
-	print::print_md::start(0 as i32);
-	keyboard_md::start();
+  print::print_md::start(0 as i64);
+  keyboard_md::start();
 }
