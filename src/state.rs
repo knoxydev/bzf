@@ -31,15 +31,10 @@ pub mod state_md
   {
     let mut folder: Vec<String> = Vec::new();
 
-    //if let Ok(entries) = fs::read_dir(path) {
-    //  for entry in entries {
-    //    if let Ok(entry) = entry { folder.push(entry.file_name().into_string().unwrap()); }
-    //  }
-    //} else { eprintln!("Failed to read directory contents"); }
-
-
-    for entry in path.read_dir().expect("read_dir call failed") {
-      if let Ok(entry) = entry { folder.push(entry.file_name().into_string().unwrap()); }
+    for entry in path.read_dir().expect("read_dir call failed")
+    {
+      if let Ok(entry) = entry 
+        { folder.push(entry.file_name().into_string().unwrap()); }
     }
 
     return folder;
