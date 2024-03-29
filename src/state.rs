@@ -40,6 +40,15 @@ pub mod state_md
     return folder;
   }
 
+
+  pub fn check_type_path(next: &PathBuf) -> bool
+  {
+    // TRUE = DIRECTORY, FALSE = FILE
+    if let Ok(metadata) = fs::metadata(next) { return metadata.is_dir(); }
+    else { return false; }
+  }
+  
+
   
   pub fn init() -> Core
   {

@@ -42,10 +42,14 @@ pub mod keyboard_md
           let mut next_path = &mut core.curr_path;
           next_path.push(PathBuf::from(next_id));
 
-          core.data = state_md::get(next_path.to_path_buf());
-          core.curr_path = next_path.to_path_buf();
-
-          x = 0;                
+          let path_is: bool = state_md::check_type_path(&next_path);
+          if path_is == true
+          {
+            core.data = state_md::get(next_path.to_path_buf());
+            core.curr_path = next_path.to_path_buf();
+            x = 0;
+          }
+          else { core.curr_path.pop(); }
         }
         if keys.contains(&Keycode::Left)
         {
