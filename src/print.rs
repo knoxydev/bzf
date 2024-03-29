@@ -5,6 +5,7 @@ pub mod print_md
   
   use std::fs;
   use std::io::{self, Write};
+  use std::path::PathBuf;
 
 
   const colors: [&str; 8] = 
@@ -26,6 +27,12 @@ pub mod print_md
   }
 
 
+  fn print_path(path: &PathBuf)
+  {
+    println!("\n{}\n", path.display());
+  }
+
+
   pub fn keycode_q(x: String) -> String
   {
     return format!("{}{}{}{}", colors[0], x, colors[0], colors[7]);
@@ -37,6 +44,9 @@ pub mod print_md
   	print!("\x1B[2J");    
   	print!("\x1B[1;1H");
   	io::stdout().flush().unwrap();
+
+
+    print_path(&core.curr_path);
     
 			
   	for (idx, elm) in core.data.clone().into_iter().enumerate()
