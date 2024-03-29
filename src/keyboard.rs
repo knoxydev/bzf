@@ -16,7 +16,6 @@ pub mod keyboard_md
     
     print_md::start(&core, 0 as i64);    
 
-
   	loop
   	{
       let keys = device_state.get_keys();
@@ -53,13 +52,14 @@ pub mod keyboard_md
         }
         if keys.contains(&Keycode::Left)
         {
-          let mut prev = core.curr_path.clone();
+          let prev_clone: PathBuf = core.curr_path.clone();
+          let mut prev: PathBuf = core.curr_path.clone();
           prev.pop();
 
           core.curr_path = prev.to_path_buf();
           core.data = state_md::get(prev.to_path_buf());
-          
-          x = 0;
+
+          x = state_md::prev_path_id(&prev_clone, &core.data);
         }
         if keys.contains(&Keycode::Q)
         {  

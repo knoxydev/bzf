@@ -47,7 +47,26 @@ pub mod state_md
     if let Ok(metadata) = fs::metadata(next) { return metadata.is_dir(); }
     else { return false; }
   }
+
+
+  pub fn prev_path_id(prev: &PathBuf, data: &Vec<String>) -> i64
+  {
+    let mut path_x: String = String::new();
+    
+    if let Some(file_name) = prev.file_name() {
+      if let Some(file_name_str) = file_name.to_str()
+        { path_x = file_name_str.to_string(); }
+      else { println!("[ERROR]: Failed to convert to string"); }
+    }
+    else { println!("[ERROR]: PathBuf is empty"); }
   
+    println!("{:?}\n", path_x);
+
+    for (idx, elm) in data.iter().enumerate()
+      { if path_x == data[idx] { return idx as i64; } }
+    
+    return 0 as i64;
+  }
 
   
   pub fn init() -> Core
