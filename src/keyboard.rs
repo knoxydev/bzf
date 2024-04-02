@@ -4,6 +4,7 @@ pub mod keyboard_md
   use crate::state::state_md::Core;
   use crate::print::print_md;
   use crate::state::state_md;
+  use crate::commands::commands_md;
   use device_query::{DeviceQuery, DeviceState, Keycode};
 
 
@@ -11,7 +12,7 @@ pub mod keyboard_md
   {
   	let device_state = DeviceState::new();
     let mut core = state_md::start();
-  	let mut prev_keys = Vec::new();    
+  	let mut prev_keys = Vec::new();
   	let mut x: i64 = 0;
     
     print_md::start(&core, 0 as i64);    
@@ -65,6 +66,10 @@ pub mod keyboard_md
         {  
           println!("{}", print_md::keycode_q("\n[EXIT]\n".to_string()));
           return;
+        }
+        if keys.contains(&Keycode::O)
+        {
+          commands_md::open_explorer(&core.curr_path);
         }
         print_md::start(&core, x);
       }
