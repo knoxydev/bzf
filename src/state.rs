@@ -4,11 +4,24 @@ pub mod state_md
   use std::env;
   use std::path::{Path, PathBuf};
   use device_query::Keycode;
-  
+
+
+  #[derive(Clone)]
+  enum Type { Directory, File, }
+
+
+  #[derive(Clone)]
+  pub struct Info
+  {
+    pub obj : String,
+    pub typeis : Type,
+    pub size : i64,
+  }
+
 
   pub struct Core
   {
-    pub data : Vec<String>,
+    pub data : Vec<Info>,
     pub curr_path : PathBuf,
     pub prev_path : PathBuf,
   }
@@ -23,24 +36,50 @@ pub mod state_md
 
 
   // GIVE LENGTH OF VECTOR WHICH CONTAIN CURRENT FOLDER'S DATA
-  pub fn len(x: &Vec<String>) -> i64 { return x.len() as i64; }
-
+  pub fn len(x: &Vec<Info>) -> i64 { return x.len() as i64; }
+ 
 
   // RETURN VECTOR WHICH CONTAIN CURRENT FOLDER'S DATA
-  pub fn get(path: PathBuf) -> Vec<String>
+  pub fn get(path: PathBuf) -> Vec<Info>
   {
-    let mut folder: Vec<String> = Vec::new();
+    let mut folder: Vec<Info> = Vec::new();
 
-    for entry in path.read_dir().expect("read_dir call failed")
+    match fs::read_dir(path)
     {
-      if let Ok(entry) = entry 
-        { folder.push(entry.file_name().into_string().unwrap()); }
+      Ok(x) => {
+        for entry in x {        
+          if let Ok(elm) = entry {
+            let file_type = elm.file_type();
+
+            if let Ok(ft) = file_type
+            {
+              if ft.is_dir() { folder.push(
+                Info {
+                  obj: elm.file_name().into_string().unwrap(),
+                  typeis: Type::Directory, size: 0,
+                });
+              }
+              else { folder.push(
+                Info {
+                  obj: elm.file_name().into_string().unwrap(),
+                  typeis: Type::File, size: 0,
+                });
+              }
+            }
+            else
+            { println!("[ERROR]: Failed to get file type for {}", elm.path().display()); }
+          }
+          else
+          { println!("[ERROR]: Failed to get file type for {}", entry.expect("").path().display()); }
+        }
+      },
+      Err(e) => println!("[ERROR]: Failed to read directory - {:?}", e),
     }
 
     return folder;
   }
 
-
+  
   pub fn check_type_path(next: &PathBuf) -> bool
   {
     // TRUE = DIRECTORY, FALSE = FILE
@@ -49,7 +88,7 @@ pub mod state_md
   }
 
 
-  pub fn prev_path_id(prev: &PathBuf, data: &Vec<String>) -> i64
+  pub fn prev_path_id(prev: &PathBuf, data: &Vec<Info>) -> i64
   {
     let mut path_x: String = String::new();
     
@@ -63,7 +102,7 @@ pub mod state_md
     println!("{:?}\n", path_x);
 
     for (idx, elm) in data.iter().enumerate()
-      { if path_x == data[idx] { return idx as i64; } }
+      { if path_x == data[idx].obj { return idx as i64; } }
     
     return 0 as i64;
   }
@@ -77,11 +116,5 @@ pub mod state_md
       prev_path : PathBuf::new(),
       data : get(path()),
     }
-  }
-  
-    
-  pub fn start() -> Core
-  {
-    return init();
   }
 }

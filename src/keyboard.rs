@@ -11,7 +11,7 @@ pub mod keyboard_md
   pub fn start()
   {
   	let device_state = DeviceState::new();
-    let mut core = state_md::start();
+    let mut core = state_md::init();
   	let mut prev_keys = Vec::new();
   	let mut x: i64 = 0;
     
@@ -38,7 +38,7 @@ pub mod keyboard_md
         }
         if keys.contains(&Keycode::Right)
         {
-          let next_id: &String = &core.data[x as usize];
+          let next_id: &String = &core.data[x as usize].obj;
           let mut next_path = &mut core.curr_path;
           next_path.push(PathBuf::from(next_id));
 
@@ -47,6 +47,7 @@ pub mod keyboard_md
           {
             core.data = state_md::get(next_path.to_path_buf());
             core.curr_path = next_path.to_path_buf();
+            
             x = 0;
           }
           else { core.curr_path.pop(); }

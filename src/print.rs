@@ -51,8 +51,8 @@ pub mod print_md
 			
   	for (idx, elm) in core.data.clone().into_iter().enumerate()
   	{
-      if (idx as i64 == id) { println!("{}", print(elm)); }
-      else { println!("  {}", elm); }			
+      if (idx as i64 == id) { println!("{}", print(elm.obj)); }
+      else { println!("  {}", elm.obj); }
   	}
   } 
 }
