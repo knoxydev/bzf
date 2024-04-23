@@ -7,7 +7,7 @@ pub mod state_md
 
 
   #[derive(Clone)]
-  enum Type { Directory, File, }
+  pub enum Type { Directory, File, }
 
 
   #[derive(Clone)]

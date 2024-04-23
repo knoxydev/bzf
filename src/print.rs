@@ -1,6 +1,6 @@
 pub mod print_md
 {
-  use crate::state::state_md::Core;
+  use crate::state::state_md::{Core, Type};
   use crate::state::state_md;
   
   use std::fs;
@@ -21,12 +21,6 @@ pub mod print_md
   ];
 
 
-  fn print(x: String) -> String
-  {
-    return format!("{}> {}{}{}", colors[3], x, colors[3], colors[7]);
-  }
-
-
   fn print_path(path: &PathBuf)
   {
     println!("\n{}\n", path.display());
@@ -36,6 +30,25 @@ pub mod print_md
   pub fn keycode_q(x: String) -> String
   {
     return format!("{}{}{}{}", colors[0], x, colors[0], colors[7]);
+  }
+
+
+  fn print(curr: bool, elm: String, typeis: Type)
+  {
+    if curr == true
+    {
+      match typeis {
+        Type::Directory => println!("{}> • {}{}{}", colors[3], elm, colors[3], colors[7]),
+        Type::File => println!("{}>   {}{}{}", colors[3], elm, colors[3], colors[7]),
+      }
+    }
+    else
+    {
+      match typeis {
+        Type::Directory => println!("  • {}", elm),
+        Type::File => println!("    {}", elm),
+      }
+    }
   }
 
 
@@ -51,8 +64,8 @@ pub mod print_md
 			
   	for (idx, elm) in core.data.clone().into_iter().enumerate()
   	{
-      if (idx as i64 == id) { println!("{}", print(elm.obj)); }
-      else { println!("  {}", elm.obj); }
+      if (idx as i64 == id) { print(true, elm.obj, elm.typeis); }
+      else { print(false, elm.obj, elm.typeis); }
   	}
   } 
 }
