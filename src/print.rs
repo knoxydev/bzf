@@ -1,14 +1,14 @@
 pub mod print_md
 {
-  use crate::state::state_md::{Core, Type};
+  use crate::state::state_md::{Core, Type, Info, Move};
   use crate::state::state_md;
-  
+
   use std::fs;
   use std::io::{self, Write};
   use std::path::PathBuf;
 
 
-  const colors: [&str; 8] = 
+  const colors: [&str; 8] =
   [
     "\x1b[31m", // RED
     "\x1b[32m", // GREEN
@@ -33,39 +33,87 @@ pub mod print_md
   }
 
 
-  fn print(curr: bool, elm: String, typeis: Type)
+  fn print(curr: bool, elm: String, typeis: Type, id: i64)
   {
     if curr == true
     {
       match typeis {
-        Type::Directory => println!("{}> • {}{}{}", colors[3], elm, colors[3], colors[7]),
-        Type::File => println!("{}>   {}{}{}", colors[3], elm, colors[3], colors[7]),
+        Type::Directory => println!("{}{}> • {}{}{}", colors[3], id + 1, elm, colors[3], colors[7]),
+        Type::File => println!("{}{}>   {}{}{}", colors[3], id + 1, elm, colors[3], colors[7]),
       }
     }
     else
     {
       match typeis {
-        Type::Directory => println!("  • {}", elm),
-        Type::File => println!("    {}", elm),
+        Type::Directory => println!("   • {}", elm),
+        Type::File => println!("     {}", elm),
       }
     }
   }
 
 
-  pub fn start(core: &Core, id: i64)
+  fn win_size() -> (usize, usize)
   {
-  	print!("\x1B[2J");    
+    extern crate term_size;
+
+    if let Some((w, h)) = term_size::dimensions() { return (w, h); }
+    else { return (0, 0); };
+  }
+
+
+  fn render(id: i64, vect: Vec<Info>, last_move: Move)
+  {
+    let mut left_vec: Vec<Info> = Vec::new();
+    let mut right_vec: Vec<Info> = Vec::new();
+    let mut main_vec: Vec<Info> = vect.clone();
+
+    let size: (usize, usize) = win_size();
+    let h: i64 = size.1 as i64;
+
+    println!("{:?}/{:?}", id + 1, vect.len());
+
+    for (idx, elm) in vect.clone().into_iter().enumerate()
+    {
+      if (idx + 8) == h.try_into().unwrap() { right_vec.push(elm); }
+      else { main_vec.push(elm); }
+    }
+
+    /* print!("{:#?}", main_vec); */
+    print!("- {:#?}\n", right_vec);
+
+    for (idx, elm) in vect.clone().into_iter().enumerate()
+    {
+      if (vect.len() as i64) < h
+      {
+        if (idx as i64 == id) { print(true, elm.obj, elm.typeis, id); }
+        else { print(false, elm.obj, elm.typeis, id); }
+      }
+      else
+      {
+        if (idx + 10) == h.try_into().unwrap() { println!("..."); break; }
+        else
+        {
+          if (idx as i64 == id) { print(true, elm.obj, elm.typeis, id); }
+          else { print(false, elm.obj, elm.typeis, id); }
+        }
+      }
+    }
+  }
+
+
+  pub fn start(core: &Core, id: i64, last_move: Move)
+  {
+  	print!("\x1B[2J");
   	print!("\x1B[1;1H");
   	io::stdout().flush().unwrap();
 
-
     print_path(&core.curr_path);
-    
-			
-  	for (idx, elm) in core.data.clone().into_iter().enumerate()
+    render(id, core.data.clone(), last_move);
+
+  	/* for (idx, elm) in core.data.clone().into_iter().enumerate()
   	{
-      if (idx as i64 == id) { print(true, elm.obj, elm.typeis); }
-      else { print(false, elm.obj, elm.typeis); }
-  	}
-  } 
+      if (idx as i64 == id) { print(true, elm.obj, elm.typeis, id); }
+      else { print(false, elm.obj, elm.typeis, id); }
+  	} */
+  }
 }

@@ -6,11 +6,14 @@ pub mod state_md
   use device_query::Keycode;
 
 
-  #[derive(Clone)]
+  #[derive(Clone, Debug)]
   pub enum Type { Directory, File, }
 
+  #[derive(Clone, Debug, Copy)]
+  pub enum Move { Left, Right, None, }
 
-  #[derive(Clone)]
+
+  #[derive(Clone, Debug)]
   pub struct Info
   {
     pub obj : String,
@@ -37,7 +40,7 @@ pub mod state_md
 
   // GIVE LENGTH OF VECTOR WHICH CONTAIN CURRENT FOLDER'S DATA
   pub fn len(x: &Vec<Info>) -> i64 { return x.len() as i64; }
- 
+
 
   // RETURN VECTOR WHICH CONTAIN CURRENT FOLDER'S DATA
   pub fn get(path: PathBuf) -> Vec<Info>
@@ -47,7 +50,7 @@ pub mod state_md
     match fs::read_dir(path)
     {
       Ok(x) => {
-        for entry in x {        
+        for entry in x {
           if let Ok(elm) = entry {
             let file_type = elm.file_type();
 
@@ -79,7 +82,7 @@ pub mod state_md
     return folder;
   }
 
-  
+
   pub fn check_type_path(next: &PathBuf) -> bool
   {
     // TRUE = DIRECTORY, FALSE = FILE
@@ -91,23 +94,21 @@ pub mod state_md
   pub fn prev_path_id(prev: &PathBuf, data: &Vec<Info>) -> i64
   {
     let mut path_x: String = String::new();
-    
+
     if let Some(file_name) = prev.file_name() {
       if let Some(file_name_str) = file_name.to_str()
         { path_x = file_name_str.to_string(); }
       else { println!("[ERROR]: Failed to convert to string"); }
     }
     else { println!("[ERROR]: PathBuf is empty"); }
-  
-    println!("{:?}\n", path_x);
 
     for (idx, elm) in data.iter().enumerate()
       { if path_x == data[idx].obj { return idx as i64; } }
-    
+
     return 0 as i64;
   }
 
-  
+
   pub fn init() -> Core
   {
     Core
