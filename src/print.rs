@@ -61,7 +61,7 @@ pub mod print_md
   }
 
 
-  fn render(id: i64, vect: Vec<Info>, last_move: Move)
+  fn render_one(id: i64, vect: Vec<Info>, last_move: Move)
   {
     let mut left_vec: Vec<Info> = Vec::new();
     let mut right_vec: Vec<Info> = Vec::new();
@@ -97,6 +97,59 @@ pub mod print_md
           else { print(false, elm.obj, elm.typeis, id); }
         }
       }
+    }
+  }
+
+
+  fn render(id: i64, vect: Vec<Info>, last_move: Move)
+  {
+    let mut main_vec: Vec<Info> = vect.clone();
+    let mut left_vec: Vec<Info> = Vec::new();
+    let mut right_vec: Vec<Info> = Vec::new();
+
+    let size: (usize, usize) = win_size();
+    let h: i64 = size.1 as i64;
+
+    println!("{:?}/{:?}", id + 1, vect.len());
+
+    if (main_vec.len()) > h.try_into().unwrap()
+    {
+      {
+        let start_idx: usize = (h + 4) as usize;
+        let end_idx: usize = (main_vec.len()) as usize;
+
+        for elm in &main_vec[start_idx..end_idx]
+          { right_vec.push(elm.clone()); }
+
+        main_vec.drain(start_idx..end_idx);
+      }
+
+      //println!("{:?}", main_vec);
+
+
+      for (idx, elm) in main_vec.into_iter().enumerate()
+      {
+        println!("{:?}", elm.obj);
+
+        /* if (idx as i64 == id) { print(true, elm.obj, elm.typeis, id); }
+        else { print(false, elm.obj, elm.typeis, id); }
+
+        match last_move
+        {
+          Move::Left => {
+            println!("-LEFT");
+          },
+          Move::Right => {
+            println!("-RIGHT");
+          },
+          Move::None => {
+            println!("-NONE");
+          },
+        } */
+      }
+
+      println!("...");
+
     }
   }
 
