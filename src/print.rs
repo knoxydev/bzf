@@ -38,8 +38,8 @@ pub mod print_md
     if curr == true
     {
       match typeis {
-        Type::Directory => println!("{}{}> • {}{}{}", colors[3], id + 1, elm, colors[3], colors[7]),
-        Type::File => println!("{}{}>   {}{}{}", colors[3], id + 1, elm, colors[3], colors[7]),
+        Type::Directory => println!("{}{}> • {}{}{}", colors[3], id, elm, colors[3], colors[7]),
+        Type::File => println!("{}{}>   {}{}{}", colors[3], id, elm, colors[3], colors[7]),
       }
     }
     else
@@ -52,7 +52,7 @@ pub mod print_md
   }
 
 
-  fn win_size() -> (usize, usize)
+  pub fn win_size() -> (usize, usize)
   {
     extern crate term_size;
 
@@ -61,29 +61,17 @@ pub mod print_md
   }
 
 
-  fn render_one(id: i64, vect: Vec<Info>, last_move: Move)
+  fn render(id: i64, vect: Vec<Info>, last_move: Move)
   {
-    let mut left_vec: Vec<Info> = Vec::new();
-    let mut right_vec: Vec<Info> = Vec::new();
     let mut main_vec: Vec<Info> = vect.clone();
-
     let size: (usize, usize) = win_size();
-    let h: i64 = size.1 as i64;
+    let h: i64 = (size.1 as i64);
 
-    println!("{:?}/{:?}", id + 1, vect.len());
-
-    for (idx, elm) in vect.clone().into_iter().enumerate()
-    {
-      if (idx + 8) == h.try_into().unwrap() { right_vec.push(elm); }
-      else { main_vec.push(elm); }
-    }
-
-    /* print!("{:#?}", main_vec); */
-    print!("- {:#?}\n", right_vec);
+    println!("{:?}/{:?}", id, vect.len());
 
     for (idx, elm) in vect.clone().into_iter().enumerate()
     {
-      if (vect.len() as i64) < h
+      if (vect.len() as i64) < h - 6
       {
         if (idx as i64 == id) { print(true, elm.obj, elm.typeis, id); }
         else { print(false, elm.obj, elm.typeis, id); }
@@ -101,67 +89,155 @@ pub mod print_md
   }
 
 
-  fn render(id: i64, vect: Vec<Info>, last_move: Move)
+  /* fn render_two(id: i64, vect: Vec<Info>, last_move: Move)
   {
     let mut main_vec: Vec<Info> = vect.clone();
-    let mut left_vec: Vec<Info> = Vec::new();
-    let mut right_vec: Vec<Info> = Vec::new();
-
-    let size: (usize, usize) = win_size();
-    let h: i64 = size.1 as i64;
+    let mut h: i64 = 0;
+    {
+      let size: (usize, usize) = win_size();
+      h = (size.1 as i64) - 6;
+    }
 
     println!("{:?}/{:?}", id + 1, vect.len());
 
-    if (main_vec.len()) > h.try_into().unwrap()
+    if main_vec.len() > h.try_into().unwrap()
     {
-      {
-        let start_idx: usize = (h + 4) as usize;
-        let end_idx: usize = (main_vec.len()) as usize;
-
-        for elm in &main_vec[start_idx..end_idx]
-          { right_vec.push(elm.clone()); }
-
-        main_vec.drain(start_idx..end_idx);
+      if main_vec.len() > h as usize {
+        right = main_vec.split_off(h as usize);
       }
 
-      //println!("{:?}", main_vec);
+      /* println!("{:?}", last_move); */
 
-
-      for (idx, elm) in main_vec.into_iter().enumerate()
+      match last_move
       {
-        println!("{:?}", elm.obj);
-
-        /* if (idx as i64 == id) { print(true, elm.obj, elm.typeis, id); }
-        else { print(false, elm.obj, elm.typeis, id); }
-
-        match last_move
+        Move::Right => {},
+        Move::Left => {},
+        Move::Up =>
         {
-          Move::Left => {
-            println!("-LEFT");
-          },
-          Move::Right => {
-            println!("-RIGHT");
-          },
-          Move::None => {
-            println!("-NONE");
-          },
-        } */
+          if let Some(last_left) = left.pop() {
+            main_vec.insert(0, last_left);
+          }
+
+          if let Some(last_main) = main_vec.pop() {
+            right.insert(0, last_main);
+          }
+        },
+        Move::Down =>
+        {
+          if let Some(elm) = main_vec.get(0).cloned() {
+            main_vec.remove(0);
+            left.push(elm);
+          }
+
+          if let Some(elm) = right.get(0).cloned() {
+            right.remove(0);
+            main_vec.push(elm);
+          }
+        },
+        Move::None => {},
+      }
+
+      for (idx, elm) in main_vec.clone().into_iter().enumerate()
+      {
+        if (idx as i64 == id) { print(true, elm.obj, elm.typeis, id); }
+        else { print(false, elm.obj, elm.typeis, id); }
       }
 
       println!("...");
 
+      println!("left: {:?}", left.len());
+      println!("main_vec: {:?}", main_vec.len());
+      println!("right: {:?}", right.len());
+    }
+    else
+    {
+      for (idx, elm) in main_vec.into_iter().enumerate()
+      {
+        println!("{:?}", elm);
+      }
+    }
+  } */
+
+
+  /* fn render_three(id: i64, vect: Vec<Info>, last_move: Move)
+  {
+    let mut main_vec: Vec<Info> = vect.clone();
+    let mut left: Vec<Info> = Vec::new();
+    let mut right_vec: Vec<Info> = Vec::new();
+    let mut index: i64 = 0;
+
+    let mut h: i64 = 0;
+    {
+      let size: (usize, usize) = win_size();
+      h = (size.1 as i64) - 6;
+    }
+
+    println!("{:?}/{:?}", id + 1, vect.len());
+
+    fn print_vector(vector: &Vec<Info>, start_index: usize)
+    {
+      let end_index = std::cmp::min(start_index + h, vector.len());
+      for (i, item) in vector.iter().enumerate().skip(start_index).take(end_index - start_index) {
+        println!("{}: {}", i, item.obj);
+      }
+    }
+
+    match last_move
+    {
+      Move::Right => {},
+      Move::Left => {},
+      Move::Up => {
+        if index > 0 {
+          index -= 1;
+        }
+      },
+      Move::Down =>
+      {
+        if (index as usize) + (h as usize) < main_vec.len().try_into().unwrap() {
+          index += 1;
+        }
+      },
+      Move::None => {},
+    }
+
+    print_vector(&main_vec, index.try_into().unwrap());
+  } */
+
+
+  fn render_new(core: &Core, main: &Vec<Info>, id: i64, h: i64)
+  {
+    println!("{:?}/{:?}", id + 1, core.data.len());
+
+    if core.data.len() > (h as usize)
+    {
+      for (idx, elm) in main.clone().into_iter().enumerate()
+      {
+        if (idx as i64 == id) { print(true, elm.obj, elm.typeis, id + 1); }
+        else { print(false, elm.obj, elm.typeis, id + 1); }
+      }
+
+      println!("...");
+    }
+    else
+    {
+      for (idx, elm) in main.clone().into_iter().enumerate()
+      {
+        if (idx as i64 == id) { print(true, elm.obj, elm.typeis, id + 1); }
+        else { print(false, elm.obj, elm.typeis, id + 1); }
+      }
     }
   }
 
 
-  pub fn start(core: &Core, id: i64, last_move: Move)
+  pub fn start(core: &Core, main: &Vec<Info>, id: i64, h: i64)
   {
   	print!("\x1B[2J");
   	print!("\x1B[1;1H");
   	io::stdout().flush().unwrap();
 
     print_path(&core.curr_path);
-    render(id, core.data.clone(), last_move);
+    //render_new(id, core.data.clone(), last_move, h);
+    render_new(core, main, id, h)
 
   	/* for (idx, elm) in core.data.clone().into_iter().enumerate()
   	{

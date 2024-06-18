@@ -10,7 +10,7 @@ pub mod state_md
   pub enum Type { Directory, File, }
 
   #[derive(Clone, Debug, Copy)]
-  pub enum Move { Left, Right, None, }
+  pub enum Move { Left, Right, Up, Down, None, }
 
 
   #[derive(Clone, Debug)]
