@@ -204,22 +204,38 @@ pub mod print_md
   } */
 
 
-  fn render_new(core: &Core, main: &Vec<Info>, id: i64, h: i64)
+  fn render_new(core: &Core, main: &Vec<Info>, id: i64, h: i64, last_move: Move)
   {
     println!("{:?}/{:?}", id + 1, core.data.len());
 
     if core.data.len() > (h as usize)
     {
-      for (idx, elm) in main.clone().into_iter().enumerate()
-      {
-        if (idx as i64 == id) { print(true, elm.obj, elm.typeis, id + 1); }
-        else { print(false, elm.obj, elm.typeis, id + 1); }
-      }
+      match last_move {
+        Move::Down | Move::Left | Move::Right =>
+        {
+          for (idx, elm) in main.clone().into_iter().enumerate()
+          {
+            if (idx as i64 == id) { print(true, elm.obj, elm.typeis, id + 1); }
+            else { print(false, elm.obj, elm.typeis, id + 1); }
+          }
 
-      println!("...");
+          println!("...");
+        },
+        Move::Up => {
+          println!("...");
+
+          for (idx, elm) in main.clone().into_iter().enumerate()
+          {
+            if (idx as i64 == id) { print(true, elm.obj, elm.typeis, id + 1); }
+            else { print(false, elm.obj, elm.typeis, id + 1); }
+          }
+        },
+        Move::None => {},
+      }
     }
     else
     {
+      // RENDER NORMAL BLOCK
       for (idx, elm) in main.clone().into_iter().enumerate()
       {
         if (idx as i64 == id) { print(true, elm.obj, elm.typeis, id + 1); }
@@ -229,7 +245,7 @@ pub mod print_md
   }
 
 
-  pub fn start(core: &Core, main: &Vec<Info>, id: i64, h: i64)
+  pub fn start(core: &Core, main: &Vec<Info>, id: i64, h: i64, last_move: Move)
   {
   	print!("\x1B[2J");
   	print!("\x1B[1;1H");
@@ -237,7 +253,7 @@ pub mod print_md
 
     print_path(&core.curr_path);
     //render_new(id, core.data.clone(), last_move, h);
-    render_new(core, main, id, h)
+    render_new(core, main, id, h, last_move);
 
   	/* for (idx, elm) in core.data.clone().into_iter().enumerate()
   	{

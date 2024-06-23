@@ -212,6 +212,7 @@ pub mod keyboard_md
   {
   	let device_state = DeviceState::new();
   	let mut prev_keys = Vec::new();
+    let mut last_move: Move = Move::None;
 
     let mut left: Vec<Info> = Vec::new();
     let mut right: Vec<Info> = Vec::new();
@@ -227,7 +228,7 @@ pub mod keyboard_md
       (size.1 as i64) - 8
     };
 
-    print_md::start(&core, &main, x, get_size());
+    print_md::start(&core, &main, x, get_size(), last_move);
 
   	loop
   	{
@@ -241,7 +242,9 @@ pub mod keyboard_md
           if core.data.len() < h as usize {
             // NORMAL BLOCK
             id = if (id == 0) { (state_md::len(&core.data) - 1) }
-            else { id - 1 }
+            else { id - 1 };
+
+            last_move = Move::None;
           }
           else {
             if id == 0 {
@@ -253,6 +256,8 @@ pub mod keyboard_md
                 if let Some(last_main) = &main.pop() {
                   right.insert(0, last_main.clone());
                 }
+
+                last_move = Move::Up;
               }
               else
               {
@@ -260,9 +265,14 @@ pub mod keyboard_md
                 main.clear();
                 right.clear();
 
+                let mut temp_vec: Vec<Info> = core.data.clone();
+                temp_vec.reverse();
+
                 // original first main, second left
-                left = core.data[(h as usize)..].iter().rev().cloned().collect();
-                main = core.data[..(h as usize)].iter().rev().cloned().collect();
+                left = temp_vec[(h as usize)..].iter().rev().cloned().collect();
+                main = temp_vec[..(h as usize)].iter().rev().cloned().collect();
+
+                last_move = Move::Up;
 
                 /* main = core.data[..(core.data.len() - (x as usize))].to_vec();
                 left = core.data[(core.data.len() - (x as usize))..].to_vec(); */
@@ -279,7 +289,9 @@ pub mod keyboard_md
 
                 id = main.len() as i64 - 1;
               }
-            } else { id -= 1; }
+            } else {
+              id -= 1;
+            }
           }
 
           /* id = if (id == 0) { (state_md::len(&core.data) - 1) }
@@ -315,6 +327,8 @@ pub mod keyboard_md
                 right = core.data[(h as usize)..].to_vec();
                 main = core.data[..(h as usize)].to_vec();
 
+                last_move = Move::Down;
+
                 id = 0;
               }
             } else {
@@ -322,7 +336,6 @@ pub mod keyboard_md
             }
 
           }
-
 
           /* id = if (id == state_md::len(&core.data) - 1) { 0 }
           else { id + 1 };
@@ -359,6 +372,8 @@ pub mod keyboard_md
             }
           }
           else { core.curr_path.pop(); }
+
+          last_move = Move::Right;
         }
         if keys.contains(&Keycode::Left)
         {
@@ -386,6 +401,8 @@ pub mod keyboard_md
             right.clear();
             main = core.data.clone();
           }
+
+          last_move = Move::Left;
         }
         if keys.contains(&Keycode::Q)
         {
@@ -397,7 +414,7 @@ pub mod keyboard_md
           commands_md::open_explorer(&core.curr_path);
         }
 
-        print_md::start(&core, &main, id, h);
+        print_md::start(&core, &main, id, h, last_move);
         println!("l > {:?} | m > {:?} | r > {:?} | core > {:?} | h > {:?} | x > {:?} | id > {:?}", left.len(), main.len(), right.len(), core.data.len(), h, x, id);
       }
       prev_keys = keys;
