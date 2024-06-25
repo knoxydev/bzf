@@ -89,131 +89,79 @@ pub mod keyboard_md
   } */
 
 
-  /* pub fn start_old()
+/*   fn move_up(last_move: &mut Move,
+            left: &mut Vec<Info>,
+            main: &mut Vec<Info>,
+            right: &mut Vec<Info>,
+            core: &mut Core,
+            h: &mut i64,
+            x: &mut i64,
+            id: &mut i64)
   {
-  	let device_state = DeviceState::new();
-    let mut last_move: Move = Move::None;
-    let mut left: Vec<Info> = Vec::new();
-    let mut right: Vec<Info> = Vec::new();
-
-    let mut core = state_md::init();
-  	let mut prev_keys = Vec::new();
-    let mut h: i64 = 0;
-  	let mut x: i64 = 0;
-
-    let get_size = || -> i64
+    // WHEN CORE.VECTOR LESS THAN WINDOWS' HEIGHT
+    if core.data.len() < h as usize
     {
-      let size: (usize, usize) = print_md::win_size();
-      (size.1 as i64) - 3
-    };
-    h = get_size();
+      // NORMAL BLOCK
+      x = if (x == 0) { (state_md::len(&core.data) - 1) }
+      else { x - 1 };
 
-    print_md::start(&core, &main, x, h);
+      last_move = Move::None;
+    }
+    else
+    {
+      // WHEN CORE.VECTOR MORE THAN WINDOWS' HEIGHT
+      if x == 0 {
+        if left.len() != 0 {
 
-  	loop
-  	{
-      h = get_size();
+          // MOVE LEFT.END > MAIN.FIRST
+          if let Some(last_left) = left.pop() { &main.insert(0, last_left.clone()); }
+          // MOVE MAIN.END > RIGHT.FIRST
+          if let Some(last_main) = &main.pop() { right.insert(0, last_main.clone()); }
 
-      let keys = device_state.get_keys();
-      if keys != prev_keys && !keys.is_empty()
-      {
-        if core.data.len() > h as usize {
-          if core.data.len() > h as usize { right.extend(core.data.drain((h as usize)..)); }
+          last_move = Move::Up;
         }
-
-        if keys.contains(&Keycode::Up)
+        else
         {
-          if core.data.len() >= h as usize
-          {
-            if let Some(last_left) = left.pop() {
-              &core.data.insert(0, last_left.clone());
-            }
+          left.clear();
+          main.clear();
+          right.clear();
 
-            if let Some(last_main) = &core.data.pop() {
-              right.insert(0, last_main.clone());
-            }
-          }
+          let mut temp_vec: Vec<Info> = core.data.clone();
+          temp_vec.reverse();
 
-          // IF x == 0 -> MOVE INDICATOR TO LAST ELEMENT OF ARR
-          // EL -> MOVE INDICATOR UPPER
-          /* x = if (x == 0) { (state_md::len(&core.data) - 1) }
-          else { x - 1 } */
+          // original first main, second left
+          left = temp_vec[(h as usize)..].iter().rev().cloned().collect();
+          main = temp_vec[..(h as usize)].iter().rev().cloned().collect();
+
+          last_move = Move::Up;
+
+          x = main.len() as i64 - 1;
         }
-        if keys.contains(&Keycode::Down)
-        {
-          if core.data.len() >= h as usize {
-            if let Some(elm) = &core.data.get(0).cloned() {
-              &core.data.remove(0);
-              left.push(elm.clone());
-            }
-
-            if let Some(elm) = right.get(0).cloned() {
-              right.remove(0);
-              &core.data.push(elm);
-            }
-          }
-
-          // IF x == 0 -> MOVE INDICATOR TO FIRST ELEMENT OF ARR
-          // EL -> MOVE INDICATOR LOWER
-          /* x = if (x == state_md::len(&core.data) - 1) { 0 }
-          else { x + 1 }; */
-        }
-        if keys.contains(&Keycode::Right)
-        {
-          let next_id: &String = &core.data[x as usize].obj;
-          let mut next_path = &mut core.curr_path;
-          next_path.push(PathBuf::from(next_id));
-
-          let path_is: bool = state_md::check_type_path(&next_path);
-          if path_is == true
-          {
-            core.data = state_md::get(next_path.to_path_buf());
-            core.curr_path = next_path.to_path_buf();
-
-            x = 0;
-          }
-          else { core.curr_path.pop(); }
-          last_move = Move::Right;
-        }
-        if keys.contains(&Keycode::Left)
-        {
-          let prev_clone: PathBuf = core.curr_path.clone();
-          let mut prev: PathBuf = core.curr_path.clone();
-          prev.pop();
-
-          core.curr_path = prev.to_path_buf();
-          core.data = state_md::get(prev.to_path_buf());
-
-          x = state_md::prev_path_id(&prev_clone, &core.data);
-          last_move = Move::Left;
-        }
-        if keys.contains(&Keycode::Q)
-        {
-          println!("{}", print_md::keycode_q("\n[EXIT]\n".to_string()));
-          return;
-        }
-        if keys.contains(&Keycode::O)
-        {
-          commands_md::open_explorer(&core.curr_path);
-        }
-
-        print_md::start(&core, &main, x, h);
-        println!("left -> {:?}", left.len());
-        println!("main -> {:?}", core.data.len());
-        println!("right -> {:?}", right.len());
-        println!("h -> {:?}", h);
-      }
-      prev_keys = keys;
+      } else { x -= 1; }
     }
   } */
+
+/* move_up(
+            &mut last_move,
+            &mut left,
+            &mut main,
+            &mut right,
+            &mut core,
+            &mut h,
+            &mut x,
+            &mut id
+          ); */
+
+
+
 
 
   pub fn start()
   {
   	let device_state = DeviceState::new();
   	let mut prev_keys = Vec::new();
-    let mut last_move: Move = Move::None;
 
+    let mut last_move: Move = Move::None;
     let mut left: Vec<Info> = Vec::new();
     let mut right: Vec<Info> = Vec::new();
     let mut core = state_md::init();
@@ -221,6 +169,7 @@ pub mod keyboard_md
     let mut h: i64 = 0;
   	let mut x: i64 = 0;
     let mut id: i64 = 0;
+
 
     let get_size = || -> i64
     {
@@ -239,23 +188,28 @@ pub mod keyboard_md
       {
         if keys.contains(&Keycode::Up)
         {
-          if core.data.len() < h as usize {
+          // WHEN CORE.VECTOR LESS THAN WINDOWS' HEIGHT
+          if core.data.len() < h as usize
+          {
             // NORMAL BLOCK
+            x = if (x == 0) { (state_md::len(&core.data) - 1) }
+            else { x - 1 };
+
             id = if (id == 0) { (state_md::len(&core.data) - 1) }
             else { id - 1 };
 
             last_move = Move::None;
           }
-          else {
-            if id == 0 {
+          else
+          {
+            // WHEN CORE.VECTOR MORE THAN WINDOWS' HEIGHT
+            if x == 0 {
               if left.len() != 0 {
-                if let Some(last_left) = left.pop() {
-                  &main.insert(0, last_left.clone());
-                }
 
-                if let Some(last_main) = &main.pop() {
-                  right.insert(0, last_main.clone());
-                }
+                // MOVE LEFT.END > MAIN.FIRST
+                if let Some(last_left) = left.pop() { &main.insert(0, last_left.clone()); }
+                // MOVE MAIN.END > RIGHT.FIRST
+                if let Some(last_main) = &main.pop() { right.insert(0, last_main.clone()); }
 
                 last_move = Move::Up;
               }
@@ -274,24 +228,9 @@ pub mod keyboard_md
 
                 last_move = Move::Up;
 
-                /* main = core.data[..(core.data.len() - (x as usize))].to_vec();
-                left = core.data[(core.data.len() - (x as usize))..].to_vec(); */
-
-                /* main = core.data[core.data.len() - (id as usize)..].to_vec();
-                left = core.data[..core.data.len() - (id as usize)].to_vec(); */
-
-                /* let y = (core.data.len() + 1) as i64 - id;
-
-                if (core.data.len() as i64) >= y {
-                  left.extend_from_slice(&core.data[0..y as usize]);
-                  main.extend_from_slice(&core.data[y as usize..]);
-                } */
-
-                id = main.len() as i64 - 1;
+                x = main.len() as i64 - 1;
               }
-            } else {
-              id -= 1;
-            }
+            } else { x -= 1; }
           }
 
           /* id = if (id == 0) { (state_md::len(&core.data) - 1) }
@@ -302,11 +241,11 @@ pub mod keyboard_md
         {
           if core.data.len() < h as usize {
             // NORMAL BLOCK
-            id = if (id == state_md::len(&core.data) - 1) { 0 }
-            else { id + 1 }
+            x = if (x == state_md::len(&core.data) - 1) { 0 }
+            else { x + 1 }
           }
           else {
-            if main.len() - 1 == (id as usize) {
+            if main.len() - 1 == (x as usize) {
               if right.len() != 0 {
                 if let Some(elm) = &main.get(0).cloned() {
                   &main.remove(0);
@@ -329,10 +268,10 @@ pub mod keyboard_md
 
                 last_move = Move::Down;
 
-                id = 0;
+                x = 0;
               }
             } else {
-              id += 1;
+              x += 1;
             }
 
           }
@@ -343,7 +282,7 @@ pub mod keyboard_md
         }
         if keys.contains(&Keycode::Right)
         {
-          let next_id: &String = &core.data[id as usize].obj;
+          let next_id: &String = &core.data[x as usize].obj;
           let mut next_path = &mut core.curr_path;
           next_path.push(PathBuf::from(next_id));
 
@@ -353,7 +292,7 @@ pub mod keyboard_md
             core.data = state_md::get(next_path.to_path_buf());
             core.curr_path = next_path.to_path_buf();
 
-            id = 0;
+            x = 0;
 
             if core.data.len() > h as usize
             {
@@ -384,7 +323,7 @@ pub mod keyboard_md
           core.curr_path = prev.to_path_buf();
           core.data = state_md::get(prev.to_path_buf());
 
-          id = state_md::prev_path_id(&prev_clone, &core.data);
+          x = state_md::prev_path_id(&prev_clone, &core.data);
 
           if core.data.len() > h as usize
           {
@@ -414,7 +353,7 @@ pub mod keyboard_md
           commands_md::open_explorer(&core.curr_path);
         }
 
-        print_md::start(&core, &main, id, h, last_move);
+        print_md::start(&core, &main, x, h, last_move);
         println!("l > {:?} | m > {:?} | r > {:?} | core > {:?} | h > {:?} | x > {:?} | id > {:?}", left.len(), main.len(), right.len(), core.data.len(), h, x, id);
       }
       prev_keys = keys;
