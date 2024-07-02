@@ -30,6 +30,14 @@ pub mod state_md
   }
 
 
+  pub struct View
+  {
+    pub core: Core,
+    pub idx: i64,
+    pub win_size_h: i64,
+  }
+
+
   pub fn path() -> PathBuf
   {
     let mut x = PathBuf::new();
@@ -102,8 +110,10 @@ pub mod state_md
     }
     else { println!("[ERROR]: PathBuf is empty"); }
 
-    for (idx, elm) in data.iter().enumerate()
-      { if path_x == data[idx].obj { return idx as i64; } }
+    for (idx, elm) in data.iter().enumerate() {
+      if path_x == data[idx].obj { return idx as i64; }
+      else { continue; }
+    }
 
     return 0 as i64;
   }

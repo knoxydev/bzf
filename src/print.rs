@@ -1,6 +1,6 @@
 pub mod print_md
 {
-  use crate::state::state_md::{Core, Type, Info, Move};
+  use crate::state::state_md::{Core, View, Type, Info, Move};
   use crate::state::state_md;
 
   use std::fs;
@@ -252,13 +252,56 @@ pub mod print_md
   	io::stdout().flush().unwrap();
 
     print_path(&core.curr_path);
+
+    // FUNC ARGS - core: &Core, main: &Vec<Info>, id: i64, h: i64, last_move: Move
     //render_new(id, core.data.clone(), last_move, h);
     render_new(core, main, id, h, last_move);
+
 
   	/* for (idx, elm) in core.data.clone().into_iter().enumerate()
   	{
       if (idx as i64 == id) { print(true, elm.obj, elm.typeis, id); }
       else { print(false, elm.obj, elm.typeis, id); }
   	} */
+  }
+
+
+
+  // ---------------------------------------------------
+
+
+
+  pub fn render_last(view: &View)
+  {
+    let core_len: i64 = view.core.data.len().try_into().unwrap_or(0);
+    println!("{:?}/{:?}", view.idx + 1, core_len);
+
+
+    if view.core.data.len() > view.win_size_h.try_into().unwrap()
+    {
+
+    }
+
+
+    // RENDER NORMAL BLOCK
+    if view.core.data.len() < view.win_size_h.try_into().unwrap()
+    {
+      for (idx, elm) in view.core.data.clone().into_iter().enumerate()
+      {
+        if (idx as i64 == view.idx) { print(true, elm.obj, elm.typeis, view.idx + 1); }
+        else { print(false, elm.obj, elm.typeis, view.idx + 1); }
+      }
+    }
+  }
+
+
+  pub fn start_view(view: &View)
+  {
+  	print!("\x1B[2J");
+  	print!("\x1B[1;1H");
+  	io::stdout().flush().unwrap();
+
+    print_path(&view.core.curr_path);
+    render_last(&view);
   }
 }
