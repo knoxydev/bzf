@@ -2,6 +2,7 @@ pub mod state_md
 {
   use std::fs;
   use std::env;
+  use std::sync::Arc;
   use std::path::{Path, PathBuf};
   use device_query::Keycode;
 
@@ -9,7 +10,7 @@ pub mod state_md
   #[derive(Clone, Debug)]
   pub enum Type { Directory, File, }
 
-  #[derive(Clone, Debug, Copy)]
+  #[derive(Clone, Debug)]
   pub enum Move { Left, Right, Up, Down, None, }
 
 
@@ -86,6 +87,8 @@ pub mod state_md
       },
       Err(e) => println!("[ERROR]: Failed to read directory - {:?}", e),
     }
+
+    //let arc_folder: Arc<Vec<Info>> = Arc::new(folder);
 
     return folder;
   }
