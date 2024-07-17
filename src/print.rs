@@ -38,15 +38,15 @@ pub mod print_md
     if curr == true
     {
       match typeis {
-        Type::Directory => println!("{}{}> • {}{}{}", colors[3], id, elm, colors[3], colors[7]),
-        Type::File => println!("{}{}>   {}{}{}", colors[3], id, elm, colors[3], colors[7]),
+        Type::Directory => println!("{}{}>  • {}{}{}", colors[3], id, elm, colors[3], colors[7]),
+        Type::File => println!("{}{}>    {}{}{}", colors[3], id, elm, colors[3], colors[7]),
       }
     }
     else
     {
       match typeis {
-        Type::Directory => println!("   • {}", elm),
-        Type::File => println!("     {}", elm),
+        Type::Directory => println!("     • {}", elm),
+        Type::File => println!("      {}", elm),
       }
     }
   }
@@ -61,57 +61,29 @@ pub mod print_md
   }
 
 
-  fn render(id: i64, vect: Vec<Info>, last_move: Move)
-  {
-    let mut main_vec: Vec<Info> = vect.clone();
-    let size: (usize, usize) = win_size();
-    let h: i64 = (size.1 as i64);
-
-    println!("{:?}/{:?}", id, vect.len());
-
-    for (idx, elm) in vect.clone().into_iter().enumerate()
-    {
-      if (vect.len() as i64) < h - 6
-      {
-        if (idx as i64 == id) { print(true, elm.obj, elm.typeis, id); }
-        else { print(false, elm.obj, elm.typeis, id); }
-      }
-      else
-      {
-        if (idx + 10) == h.try_into().unwrap() { println!("..."); break; }
-        else
-        {
-          if (idx as i64 == id) { print(true, elm.obj, elm.typeis, id); }
-          else { print(false, elm.obj, elm.typeis, id); }
-        }
-      }
-    }
-  }
-
-
   // ---------------------------------------------------
 
 
-  pub fn print_new(iter_elm: &String, iter_typeis: &Type, view_idx: i64, iter_idx: i64)
+  pub fn print_list(iter_elm: &String, iter_typeis: &Type, view_idx: i64, iter_idx: i64)
   {
     if (iter_idx as i64 == view_idx)
     {
       match iter_typeis {
-        Type::Directory => println!("{}{}> • {}{}{}", colors[3], view_idx + 1, iter_elm, colors[3], colors[7]),
+        Type::Directory => println!("{}{}>  • {}{}{}", colors[3], view_idx + 1, iter_elm, colors[3], colors[7]),
         Type::File => println!("{}{}>   {}{}{}", colors[3], view_idx, iter_elm, colors[3], colors[7]),
       }
     }
     else
     {
       match iter_typeis {
-        Type::Directory => println!("   • {}", iter_elm),
+        Type::Directory => println!("    • {}", iter_elm),
         Type::File => println!("     {}", iter_elm),
       }
     }
   }
 
 
-  pub fn render_last(view: &View)
+  pub fn render(view: &View)
   {
     let check_print_dots = || {
 
@@ -139,7 +111,7 @@ pub mod print_md
         .skip((skip as usize).try_into().unwrap())
         .take(view.win_size_h as usize)
         .for_each(|(iter_idx, iter_elm)| {
-          print_new(&iter_elm.obj, &iter_elm.typeis, view.idx, iter_idx as i64);
+          print_list(&iter_elm.obj, &iter_elm.typeis, view.idx, iter_idx as i64);
         });
 
       if &view.core.data.len() - (skip as usize) > view.win_size_h as usize { println!("..."); }
@@ -151,8 +123,11 @@ pub mod print_md
     {
       for (idx, elm) in view.core.data.clone().into_iter().enumerate()
       {
-        if (idx as i64 == view.idx) { print(true, elm.obj, elm.typeis, view.idx + 1); }
-        else { print(false, elm.obj, elm.typeis, view.idx + 1); }
+        /* if (idx as i64 == view.idx) { print(true, elm.obj, elm.typeis, view.idx + 1); }
+        else { print(false, elm.obj, elm.typeis, view.idx + 1); } */
+
+        if (idx as i64 == view.idx) { print_list(&elm.obj, &elm.typeis, view.idx, idx as i64); }
+        else { print_list(&elm.obj, &elm.typeis, view.idx, idx as i64); }
       }
     }
   }
@@ -163,11 +138,11 @@ pub mod print_md
     print!("\x1B[2J");
   	print!("\x1B[1;1H");
 
-    print!(r"\E[2J\E[2H");
+    // print!(r"\E[2J\E[2H");
 
   	io::stdout().flush().unwrap();
 
     print_path(&view.core.curr_path);
-    render_last(&view);
+    render(&view);
   }
 }
