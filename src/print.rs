@@ -8,7 +8,7 @@ pub mod print_md
   use std::path::PathBuf;
 
 
-  const colors: [&str; 8] =
+  pub const colors: [&str; 8] =
   [
     "\x1b[31m", // RED
     "\x1b[32m", // GREEN
@@ -23,32 +23,7 @@ pub mod print_md
 
   fn print_path(path: &PathBuf)
   {
-    println!("\n{}\n", path.display());
-  }
-
-
-  pub fn keycode_q(x: String) -> String
-  {
-    return format!("{}{}{}{}", colors[0], x, colors[0], colors[7]);
-  }
-
-
-  fn print(curr: bool, elm: String, typeis: Type, id: i64)
-  {
-    if curr == true
-    {
-      match typeis {
-        Type::Directory => println!("{}{}>  • {}{}{}", colors[3], id, elm, colors[3], colors[7]),
-        Type::File => println!("{}{}>    {}{}{}", colors[3], id, elm, colors[3], colors[7]),
-      }
-    }
-    else
-    {
-      match typeis {
-        Type::Directory => println!("     • {}", elm),
-        Type::File => println!("      {}", elm),
-      }
-    }
+    println!("{}", path.display());
   }
 
 
@@ -68,16 +43,21 @@ pub mod print_md
   {
     if (iter_idx as i64 == view_idx)
     {
+      let formatted = format!("{:width$}", view_idx + 1, width = 5);
+
       match iter_typeis {
-        Type::Directory => println!("{}{}>  • {}{}{}", colors[3], view_idx + 1, iter_elm, colors[3], colors[7]),
-        Type::File => println!("{}{}>   {}{}{}", colors[3], view_idx, iter_elm, colors[3], colors[7]),
+        Type::Directory => println!("{}{}>  • {}{}{}", colors[3], formatted, iter_elm, colors[3], colors[7]),
+        Type::File => println!("{}{}>    {}{}{}", colors[3], formatted, iter_elm, colors[3], colors[7]),
       }
     }
     else
     {
+      let formatted_one = format!("{:width$} • {}", " ", iter_elm, width = 7);
+      let formatted_two = format!("{:width$}{}", " ", iter_elm, width = 10);
+
       match iter_typeis {
-        Type::Directory => println!("    • {}", iter_elm),
-        Type::File => println!("     {}", iter_elm),
+        Type::Directory => println!("{}", formatted_one),
+        Type::File => println!("{}", formatted_two),
       }
     }
   }
@@ -85,12 +65,8 @@ pub mod print_md
 
   pub fn render(view: &View)
   {
-    let check_print_dots = || {
-
-    };
-
     let core_len: i64 = view.core.data.len().try_into().unwrap_or(0);
-    println!("{:?}/{:?}", view.idx + 1, core_len);
+    println!("{:?}/{:?}\n", view.idx + 1, core_len);
 
 
     if view.core.data.len() > view.win_size_h.try_into().unwrap()
