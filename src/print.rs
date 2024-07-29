@@ -36,28 +36,31 @@ pub mod print_md
   }
 
 
-  // ---------------------------------------------------
-
-
-  pub fn print_list(iter_elm: &String, iter_typeis: &Type, view_idx: i64, iter_idx: i64)
+  pub fn print_list(iter_elm: &String, iter_typeis: &Type, view_idx: i64, iter_idx: i64, core_len: i64)
   {
+    let line_space: usize = (view_idx.abs().to_string().len() + core_len.abs().to_string().len()) + 1;
+
     if (iter_idx as i64 == view_idx)
     {
-      let formatted = format!("{:width$}", view_idx + 1, width = 5);
+      // let formatted = format!("{:width$}", view_idx + 1, width = line_space);
+
+      let formatted = format!("{:width$}", format!("{}/{}", view_idx + 1, core_len), width = line_space);
 
       match iter_typeis {
-        Type::Directory => println!("{}{}>  • {}{}{}", colors[3], formatted, iter_elm, colors[3], colors[7]),
-        Type::File => println!("{}{}>    {}{}{}", colors[3], formatted, iter_elm, colors[3], colors[7]),
+        Type::Directory => println!("{}{}  • {}{}{}", colors[3], formatted, iter_elm, colors[3], colors[7]),
+        Type::File => println!("{}{}    {}{}{}", colors[3], formatted, iter_elm, colors[3], colors[7]),
       }
     }
     else
     {
-      let formatted_one = format!("{:width$} • {}", " ", iter_elm, width = 7);
-      let formatted_two = format!("{:width$}{}", " ", iter_elm, width = 10);
+      //let formatted_folder = format!("{:width$} ", format!("{}/{}", view_idx + 1, core_len), width = (line_space_two) + 1);
+      
+      let formatted_dict = format!("{:width$} • {}", " ", iter_elm, width = (line_space + 1));
+      let formatted_file = format!("{:width$}{}", " ", iter_elm, width = (line_space + 4));
 
       match iter_typeis {
-        Type::Directory => println!("{}", formatted_one),
-        Type::File => println!("{}", formatted_two),
+        Type::Directory => println!("{}", formatted_dict),
+        Type::File => println!("{}", formatted_file),
       }
     }
   }
@@ -66,8 +69,7 @@ pub mod print_md
   pub fn render(view: &View)
   {
     let core_len: i64 = view.core.data.len().try_into().unwrap_or(0);
-    println!("{:?}/{:?}\n", view.idx + 1, core_len);
-
+    print!("\n");
 
     if view.core.data.len() > view.win_size_h.try_into().unwrap()
     {
@@ -87,7 +89,7 @@ pub mod print_md
         .skip((skip as usize).try_into().unwrap())
         .take(view.win_size_h as usize)
         .for_each(|(iter_idx, iter_elm)| {
-          print_list(&iter_elm.obj, &iter_elm.typeis, view.idx, iter_idx as i64);
+          print_list(&iter_elm.obj, &iter_elm.typeis, view.idx, iter_idx as i64, core_len);
         });
 
       if &view.core.data.len() - (skip as usize) > view.win_size_h as usize { println!("..."); }
@@ -102,8 +104,8 @@ pub mod print_md
         /* if (idx as i64 == view.idx) { print(true, elm.obj, elm.typeis, view.idx + 1); }
         else { print(false, elm.obj, elm.typeis, view.idx + 1); } */
 
-        if (idx as i64 == view.idx) { print_list(&elm.obj, &elm.typeis, view.idx, idx as i64); }
-        else { print_list(&elm.obj, &elm.typeis, view.idx, idx as i64); }
+        if (idx as i64 == view.idx) { print_list(&elm.obj, &elm.typeis, view.idx, idx as i64, core_len); }
+        else { print_list(&elm.obj, &elm.typeis, view.idx, idx as i64, core_len); }
       }
     }
   }

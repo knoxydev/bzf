@@ -1,7 +1,6 @@
 pub mod keyboard_md
 {
   use std::path::PathBuf;
-  use std::process::Command;
   use crate::state::state_md::{Core, Move, Info, View};
   use crate::print::print_md;
   use crate::state::state_md;
@@ -93,30 +92,7 @@ pub mod keyboard_md
       }
       else if keys.contains(&Keycode::Space)
       {
-        if cfg!(target_os = "windows")
-        {
-          let output = Command::new("cmd")
-            .args(&["/C", "cd", view.core.curr_path.to_str().expect("CAN'T CONVERT PathBuf to str")])
-            .output()
-            .expect("Failed to execute command");
-
-          println!("{}", String::from_utf8_lossy(&output.stdout));
-          println!("{:?}", view.core.curr_path);
-
-          return;
-        }
-        else if cfg!(target_os = "linux")
-        {
-
-        }
-        else if cfg!(target_os = "macos")
-        {
-
-        }
-        else
-        {
-
-        }
+        commands_md::change_path(&view.core.curr_path);
       }
       else if keys.contains(&Keycode::O)
       {
