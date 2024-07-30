@@ -22,5 +22,5 @@ use std::io::{self, Write};
 
 fn main()
 {
-  keyboard_md::start();
+  keyboard_md::start_new();
 }
