@@ -2,16 +2,11 @@ pub mod state_md
 {
   use std::fs;
   use std::env;
-  use std::sync::Arc;
   use std::path::{Path, PathBuf};
-  use device_query::Keycode;
 
 
   #[derive(Clone, Debug)]
   pub enum Type { Directory, File, }
-
-  #[derive(Clone, Debug)]
-  pub enum Move { Left, Right, Up, Down, None, }
 
 
   #[derive(Clone, Debug)]
@@ -88,8 +83,6 @@ pub mod state_md
       Err(e) => println!("[ERROR]: Failed to read directory - {:?}", e),
     }
 
-    //let arc_folder: Arc<Vec<Info>> = Arc::new(folder);
-
     return folder;
   }
 
@@ -107,8 +100,7 @@ pub mod state_md
     let mut path_x: String = String::new();
 
     if let Some(file_name) = prev.file_name() {
-      if let Some(file_name_str) = file_name.to_str()
-        { path_x = file_name_str.to_string(); }
+      if let Some(file_name_str) = file_name.to_str() { path_x = file_name_str.to_string(); }
       else { println!("[ERROR]: Failed to convert to string"); }
     }
     else { println!("[ERROR]: PathBuf is empty"); }

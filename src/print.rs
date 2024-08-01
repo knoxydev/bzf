@@ -1,6 +1,6 @@
 pub mod print_md
 {
-  use crate::state::state_md::{Core, View, Type, Info, Move};
+  use crate::state::state_md::{Core, View, Type, Info};
   use crate::state::state_md;
 
   use std::fs;
@@ -54,7 +54,7 @@ pub mod print_md
     else
     {
       //let formatted_folder = format!("{:width$} ", format!("{}/{}", view_idx + 1, core_len), width = (line_space_two) + 1);
-      
+
       let formatted_dict = format!("{:width$} • {}", " ", iter_elm, width = (line_space + 1));
       let formatted_file = format!("{:width$}{}", " ", iter_elm, width = (line_space + 4));
 

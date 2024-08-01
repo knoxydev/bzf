@@ -13,14 +13,7 @@ mod print;
 mod state;
 
 
-// PACKAGES
-use std::env;
-use std::thread;
-use std::time::Duration;
-use std::io::{self, Write};
-
-
 fn main()
 {
-  keyboard_md::start_new();
+  keyboard_md::start();
 }
