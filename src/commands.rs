@@ -1,7 +1,6 @@
 pub mod commands_md
 {
   use std::path::PathBuf;
-  use crate::state::state_md::Core;
 
 
   pub fn open_explorer(path: &PathBuf)
@@ -18,18 +17,9 @@ pub mod commands_md
 
     match std::env::consts::OS
     {
-      "linux" =>
-      {
-        run("xdg-open".to_string(), "Linux".to_string(), path);
-      },
-      "macos" =>
-      {
-        run("open".to_string(), "MacOS".to_string(), path);
-      },
-      "windows" =>
-      {
-        run("explorer.exe".to_string(), "Windows".to_string(), path);
-      },
+      "linux" => run("xdg-open".to_string(), "Linux".to_string(), path),
+      "macos" => run("open".to_string(), "MacOS".to_string(), path),
+      "windows" => run("explorer.exe".to_string(), "Windows".to_string(), path),
       _ => println!("Unknown operating system"),
     }
   }

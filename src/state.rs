@@ -2,7 +2,7 @@ pub mod state_md
 {
   use std::fs;
   use std::env;
-  use std::path::{Path, PathBuf};
+  use std::path::PathBuf;
 
 
   #[derive(Clone, Debug)]

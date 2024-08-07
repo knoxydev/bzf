@@ -1,7 +1,7 @@
 pub mod keyboard_md
 {
   use std::path::PathBuf;
-  use crate::state::state_md::{Core, Info, View};
+  use crate::state::state_md::View;
   use crate::print::print_md;
   use crate::state::state_md;
   use crate::commands::commands_md;

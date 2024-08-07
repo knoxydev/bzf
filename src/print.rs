@@ -1,9 +1,7 @@
 pub mod print_md
 {
-  use crate::state::state_md::{Core, View, Type, Info};
-  use crate::state::state_md;
+  use crate::state::state_md::{View, Type};
 
-  use std::fs;
   use std::io::{self, Write};
   use std::path::PathBuf;
 
