@@ -1,4 +1,4 @@
-/* #![allow(warnings)] */
+#![allow(warnings)]
 
 
 // MODULES
@@ -12,5 +12,5 @@ mod state;
 
 fn main()
 {
-  keyboard_md::start();
+  let _ = keyboard_md::start();
 }

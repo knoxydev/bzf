@@ -27,7 +27,7 @@ pub mod keyboard_md
     print_md::start_view(&view);
 
 
-    let mut check_key_press = |view: &mut View, event: KeyEvent, core_len: i64|
+    let check_key_press = |view: &mut View, event: KeyEvent, core_len: i64|
     {
       if event.kind == KeyEventKind::Release {
         match event.code
@@ -48,7 +48,7 @@ pub mod keyboard_md
           {
             let next_id: &String = &view.core.data[view.idx as usize].obj;
 
-            let mut next_path = &mut view.core.curr_path;
+            let next_path = &mut view.core.curr_path;
             next_path.push(PathBuf::from(next_id));
 
             let path_is: bool = state_md::check_type_path(&next_path);
@@ -76,7 +76,7 @@ pub mod keyboard_md
 
           KeyCode::Char('q') =>
           {
-            let txt: String = format!("{}\n[EXIT]\n{}{}", print_md::colors[0], print_md::colors[0], print_md::colors[7]);
+            let txt: String = format!("{}\n[EXIT]\n{}{}", print_md::COLORS[0], print_md::COLORS[0], print_md::COLORS[7]);
             println!("{}", txt);
             std::process::exit(0);
           },
@@ -101,6 +101,5 @@ pub mod keyboard_md
 
       print_md::start_view(&view);
     }
-    Ok(())
   }
 }

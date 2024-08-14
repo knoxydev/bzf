@@ -42,10 +42,6 @@ pub mod state_md
   }
 
 
-  // GIVE LENGTH OF VECTOR WHICH CONTAIN CURRENT FOLDER'S DATA
-  pub fn len(x: &Vec<Info>) -> i64 { return x.len() as i64; }
-
-
   // RETURN VECTOR WHICH CONTAIN CURRENT FOLDER'S DATA
   pub fn get(path: PathBuf) -> Vec<Info>
   {
@@ -105,7 +101,7 @@ pub mod state_md
     }
     else { println!("[ERROR]: PathBuf is empty"); }
 
-    for (idx, elm) in data.iter().enumerate() {
+    for (idx, _) in data.iter().enumerate() {
       if path_x == data[idx].obj { return idx as i64; }
       else { continue; }
     }

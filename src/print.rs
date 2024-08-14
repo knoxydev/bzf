@@ -6,7 +6,7 @@ pub mod print_md
   use std::path::PathBuf;
 
 
-  pub const colors: [&str; 8] =
+  pub const COLORS: [&str; 8] =
   [
     "\x1b[31m", // RED
     "\x1b[32m", // GREEN
@@ -45,8 +45,8 @@ pub mod print_md
       let formatted = format!("{:width$}", format!("{}/{}", view_idx + 1, core_len), width = line_space);
 
       match iter_typeis {
-        Type::Directory => println!("{}{}  • {}{}{}", colors[3], formatted, iter_elm, colors[3], colors[7]),
-        Type::File => println!("{}{}    {}{}{}", colors[3], formatted, iter_elm, colors[3], colors[7]),
+        Type::Directory => println!("{}{}  • {}{}{}", COLORS[3], formatted, iter_elm, COLORS[3], COLORS[7]),
+        Type::File => println!("{}{}    {}{}{}", COLORS[3], formatted, iter_elm, COLORS[3], COLORS[7]),
       }
     }
     else
